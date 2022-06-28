@@ -6,21 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:expense/static.dart' as Static;
 import 'package:flutter/services.dart';
 
-class AddExpenseNoGradient extends StatefulWidget {
-  int? amountupdate;
-  String? noteUpdate ;
-  String? typeUpdate;
-  bool? updatePage;
-  int? index;
-   AddExpenseNoGradient({this.amountupdate,this.noteUpdate, this.typeUpdate, this.updatePage, this.index});
+class AddNote extends StatefulWidget {
+
+
 
   @override
   _AddExpenseNoGradientState createState() => _AddExpenseNoGradientState();
 }
 
-class _AddExpenseNoGradientState extends State<AddExpenseNoGradient> {
+class _AddExpenseNoGradientState extends State<AddNote> {
   DateTime selectedDate = DateTime.now();
-  int? amount;
+  String title = "No Title";
   String note = "No Data";
   String type = "Income";
 
@@ -56,32 +52,23 @@ class _AddExpenseNoGradientState extends State<AddExpenseNoGradient> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 50,
-        centerTitle: true,
-        title: widget.updatePage == true ? Text(
-          "Add Transaction",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w700,
-          ),
-        )
-            : Text(
-          "Edit Transaction",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+        toolbarHeight: 0.0,
       ),
-      backgroundColor: Colors.black54,
+      backgroundColor: Color(0xffe2e7ef),
       //
       body: ListView(
         padding: EdgeInsets.all(
           12.0,
         ),
         children: [
+           Text(
+            "\nAdd Note",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 32.0,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
 
           //
           SizedBox(
@@ -113,16 +100,15 @@ class _AddExpenseNoGradientState extends State<AddExpenseNoGradient> {
               Expanded(
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: widget.updatePage == true ? "amount" : widget.amountupdate.toString(),
+                    hintText:  "Title" ,
                     border: InputBorder.none,
-                      hintStyle: TextStyle(color: Colors.grey)
                   ),
                   style: TextStyle(
                     fontSize: 24.0,
                   ),
                   onChanged: (val) {
                     try {
-                      widget.updatePage == true ?    amount = int.parse(val) : widget.amountupdate = int.parse(val)  ;
+                         title = val ;
                     } catch (e) {
                       // show Error
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -141,10 +127,9 @@ class _AddExpenseNoGradientState extends State<AddExpenseNoGradient> {
                                 width: 6.0,
                               ),
                               Text(
-                                "Enter only Numbers as Amount",
+                                "Enter title",
                                 style: TextStyle(
                                   fontSize: 16.0,
-                                  color: Colors.white
                                 ),
                               ),
                             ],
@@ -153,10 +138,8 @@ class _AddExpenseNoGradientState extends State<AddExpenseNoGradient> {
                       );
                     }
                   },
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  keyboardType: TextInputType.number,
+
+                  keyboardType: TextInputType.text,
                   // textAlign: TextAlign.center,
                 ),
               ),
@@ -192,9 +175,8 @@ class _AddExpenseNoGradientState extends State<AddExpenseNoGradient> {
               Expanded(
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: widget.updatePage == true ? "Note on Transaction" : widget.noteUpdate,
+                    hintText:  "Note on Transaction" ,
                     border: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.grey)
                   ),
                   style: TextStyle(
                     fontSize: 20.0,
@@ -207,80 +189,9 @@ class _AddExpenseNoGradientState extends State<AddExpenseNoGradient> {
             ],
           ),
           //
-          SizedBox(
-            height: 20.0,
-          ),
-          //
-          Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Static.PrimaryColor,
-                  borderRadius: BorderRadius.circular(
-                    16.0,
-                  ),
-                ),
-                padding: EdgeInsets.all(
-                  12.0,
-                ),
-                child: Icon(
-                  Icons.attach_money,
-                  size: 24.0,
-                  // color: Colors.grey[700],
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(
-                width: 12.0,
-              ),
-              ChoiceChip(
-                label: Text(
-                  "Income",
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    color: type == "Income" ? Colors.white : Colors.black,
-                  ),
-                ),
-                selectedColor: Static.PrimaryColor,
-                onSelected: (val) {
-                  if (val) {
-                    setState(() {
-                      type = "Income";
-                      if (note.isEmpty || note == "Expense") {
-                        note = 'Income';
-                      }
-                    });
-                  }
-                },
-                selected: type == "Income" ? true : false,
-              ),
-              SizedBox(
-                width: 8.0,
-              ),
-              ChoiceChip(
-                label: Text(
-                  "Expense",
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    color: type == "Expense" ? Colors.white : Colors.black,
-                  ),
-                ),
-                selectedColor: Static.PrimaryColor,
-                onSelected: (val) {
-                  if (val) {
-                    setState(() {
-                      type = "Expense";
 
-                      if (note.isEmpty || note == "Income") {
-                        note = 'Expense';
-                      }
-                    });
-                  }
-                },
-                selected: type == "Expense" ? true : false,
-              ),
-            ],
-          ),
+          //
+
           //
           SizedBox(
             height: 20.0,
@@ -343,21 +254,21 @@ class _AddExpenseNoGradientState extends State<AddExpenseNoGradient> {
             child: ElevatedButton(
               onPressed: () {
                 print("working");
-               // print("${widget.amountupdate}");
+                // print("${widget.amountupdate}");
                 print("working");
                 print("working");
                 print("working");
-                print(" ${selectedDate}, $type, $note, ${widget.index}");
-                if (amount != null || widget.amountupdate != null) {
+
+                if (title != null  ) {
                   DbHelper dbHelper = DbHelper();
-                 widget.updatePage == true? dbHelper.addData(amount!, selectedDate, type, note) : dbHelper.editData(widget.amountupdate!, selectedDate, type, note, widget.index!);
+                   dbHelper.addNote(title, selectedDate,  note);
                   Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       backgroundColor: Colors.red[700],
                       content: Text(
-                        "Please enter a valid Amount !",
+                        "Please enter a valid title !",
                         style: TextStyle(
                           fontSize: 16.0,
                           color: Colors.white,

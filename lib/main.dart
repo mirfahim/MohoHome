@@ -8,6 +8,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 void main() async {
   await Hive.initFlutter();
   await Hive.openBox('money');
+  await Hive.openBox('notes');
+  await Hive.openBox('budget');
   runApp(const MyApp());
 }
 

@@ -1,12 +1,9 @@
-import 'package:expense/Note/pages/home.dart';
 import 'package:expense/controllers/db_helper.dart';
 import 'package:expense/pages/add_transaction.dart';
-import 'package:expense/pages/addnote.dart';
-import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:expense/pages/expense_list.dart';
+import 'package:expense/pages/homepage.dart';
 import 'package:expense/pages/models/transaction.dart';
 import 'package:expense/pages/settings.dart';
-import 'package:expense/pages/widgets/barchart.dart';
 import 'package:expense/pages/widgets/confirm_dialog.dart';
 import 'package:expense/pages/widgets/info_snackbar.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -17,18 +14,16 @@ import 'package:expense/static.dart' as Static;
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'income_list.dart';
-
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class IncomeListPage extends StatefulWidget {
+  const IncomeListPage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<IncomeListPage> {
   //
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -57,10 +52,8 @@ class _HomePageState extends State<HomePage> {
     });
   }
   late Box box;
-  late Box boxBudget;
   late SharedPreferences preferences;
   DbHelper dbHelper = DbHelper();
-  int budget = 0;
   Map? data;
   int totalBalance = 0;
   int totalIncome = 0;
@@ -90,8 +83,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     getPreference();
     box = Hive.box('money');
-    boxBudget = Hive.box('budget');
-    
   }
 
   getPreference() async {
@@ -163,73 +154,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
-
-
-      // drawer: Drawer(
-      //   child: ListView(
-      //     // Important: Remove any padding from the ListView.
-      //     padding: EdgeInsets.zero,
-      //     children: [
-      //       const UserAccountsDrawerHeader(
-      //         decoration: BoxDecoration(color: const Color(0xff764abc)),
-      //         accountName: Text(
-      //           "Mohona",
-      //           style: TextStyle(
-      //             fontWeight: FontWeight.bold,
-      //           ),
-      //         ),
-      //         accountEmail: Text(
-      //           "mohona@gmail.com",
-      //           style: TextStyle(
-      //             fontWeight: FontWeight.bold,
-      //           ),
-      //         ),
-      //         currentAccountPicture: FlutterLogo(),
-      //       ),
-      //       ListTile(
-      //         leading: Icon(
-      //           Icons.home,
-      //         ),
-      //         title: const Text('Notes'),
-      //         onTap: () {
-      //           Navigator.of(context)
-      //               .push(
-      //             CupertinoPageRoute(
-      //               builder: (context) => NoteHome(),
-      //             ),
-      //           );
-      //
-      //
-      //         },
-      //       ),
-      //       ListTile(
-      //         leading: Icon(
-      //           Icons.train,
-      //         ),
-      //         title: const Text('Page 2'),
-      //         onTap: () {
-      //           Navigator.pop(context);
-      //         },
-      //       ),
-      //       AboutListTile( // <-- SEE HERE
-      //         icon: Icon(
-      //           Icons.info,
-      //         ),
-      //         child: Text('About app'),
-      //         applicationIcon: Icon(
-      //           Icons.local_play,
-      //         ),
-      //         applicationName: 'My Cool App',
-      //         applicationVersion: '1.0.25',
-      //         applicationLegalese: '© 2019 Company',
-      //         aboutBoxChildren: [
-      //           ///Content goes here...
-      //         ],
-      //       ),
-      //     ],
-      //   ),
-      // ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -247,15 +174,16 @@ class _HomePageState extends State<HomePage> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
-        backgroundColor: Colors.black,
         unselectedItemColor: Colors.white,
+        backgroundColor: Colors.black,
+
         onTap: _onItemTapped,
       ),
       appBar: AppBar(
         toolbarHeight: 50,
         centerTitle: true,
         title: Text(
-          "Moho's Home",
+          "Incomes",
           // "${preferences.getString('name')}",
           style: TextStyle(
             fontSize: 24.0,
@@ -265,7 +193,7 @@ class _HomePageState extends State<HomePage> {
           maxLines: 1,
         ),
       ),
-      backgroundColor: Colors.black87,
+      backgroundColor: Colors.black54,
       //
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
@@ -273,7 +201,7 @@ class _HomePageState extends State<HomePage> {
           Navigator.of(context)
               .push(
             CupertinoPageRoute(
-              builder: (context) => AddExpenseNoGradient(updatePage: true,),
+              builder: (context) => AddExpenseNoGradient(),
             ),
           )
               .then((value) {
@@ -323,132 +251,7 @@ class _HomePageState extends State<HomePage> {
             return ListView(
               children: [
                 //
-                Padding(
-                  padding: const EdgeInsets.all(
-                    12.0,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(
-                                32.0,
-                              ),
-                              gradient: LinearGradient(
-                                colors: <Color>[
-                                  Static.PrimaryColor,
-                                  Colors.blueAccent,
-                                ],
-                              ),
-                            ),
-                            child: CircleAvatar(
-                              maxRadius: 28.0,
-                              backgroundColor: Colors.transparent,
-                              child: Image.asset(
-                                "assets/face.png",
-                                width: 64.0,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 8.0,
-                          ),
 
-                        ],
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            12.0,
-                          ),
-                          color: Colors.white70,
-                        ),
-                        padding: EdgeInsets.all(
-                          12.0,
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context)
-                                .push(
-                              MaterialPageRoute(
-                                builder: (context) => Settings(),
-                              ),
-                            )
-                                .then((value) {
-                              setState(() {});
-                            });
-                          },
-                          child: Icon(
-                            Icons.lightbulb_sharp,
-                            size: 32.0,
-                            color: Color(0xff3E454C),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            12.0,
-                          ),
-                          color: Colors.white70,
-                        ),
-                        padding: EdgeInsets.all(
-                          12.0,
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context)
-                                .push(
-                              MaterialPageRoute(
-                                builder: (context) => NoteHome(),
-                              ),
-                            )
-                                .then((value) {
-                              setState(() {});
-                            });
-                          },
-                          child: Icon(
-                            Icons.note_add_outlined,
-                            size: 32.0,
-                            color: Color(0xff3E454C),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            12.0,
-                          ),
-                          color: Colors.white70,
-                        ),
-                        padding: EdgeInsets.all(
-                          12.0,
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context)
-                                .push(
-                              MaterialPageRoute(
-                                builder: (context) => Settings(),
-                              ),
-                            )
-                                .then((value) {
-                              setState(() {});
-                            });
-                          },
-                          child: Icon(
-                            Icons.settings,
-                            size: 32.0,
-                            color: Color(0xff3E454C),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 //
                 selectMonth(),
                 //
@@ -488,7 +291,7 @@ class _HomePageState extends State<HomePage> {
                       child: Column(
                         children: [
                           Text(
-                            'Total Balance',
+                            'Total Income',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 22.0,
@@ -499,120 +302,26 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(
                             height: 12.0,
                           ),
-                          totalIncome > totalExpense ?  Text(
-                            'Tk $totalBalance',
+                           Text(
+                            'Tk $totalIncome',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 36.0,
                               fontWeight: FontWeight.w700,
-                              color:   Colors.white ,
+                              color:   Colors.greenAccent ,
                             ),
-                          ) : Text(
-                            'Tk $totalBalance',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 36.0,
-                              fontWeight: FontWeight.w700,
-                              color:   Colors.red ,
-                            ),
-                          ),
+                          ) ,
+
                           SizedBox(
                             height: 12.0,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                GestureDetector(
-                                  onTap: (){
-                                    Navigator.of(context)
-                                        .push(
-                                      CupertinoPageRoute(
-                                        builder: (context) => AddExpenseNoGradient(),
-                                      ),
-                                    )
-                                        .then((value) {
-                                      setState(() {});
-                                    });
-          },
-                                  child: cardIncome(
-                                    totalIncome.toString(),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: (){
-                                    Navigator.of(context)
-                                        .push(
-                                      CupertinoPageRoute(
-                                        builder: (context) => AddExpenseNoGradient(updatePage: true,),
-                                      ),
-                                    )
-                                        .then((value) {
-                                      setState(() {});
-                                    });
-                                  },
-                                  child: cardExpense(
-                                    totalExpense.toString(),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                        
                         ],
                       ),
                     ),
                   ),
                 ),
                 //
-
-                Padding(
-                  padding: const EdgeInsets.all(
-                    12.0,
-                  ),
-                  child:  StepProgressIndicator(
-                    totalSteps: 1233,
-                    currentStep: 32,
-                    size: 8,
-                    padding: 0,
-                    selectedColor: Colors.yellow,
-                    unselectedColor: Colors.cyan,
-                    roundedEdges: Radius.circular(10),
-                    selectedGradientColor: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.yellowAccent, Colors.deepOrange],
-                    ),
-                    unselectedGradientColor: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.blue, Colors.red],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(
-                    12.0,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("20000",
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.yellow,
-                          fontWeight: FontWeight.w900,
-                        ),),
-                      Text("40000",
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.redAccent,
-                          fontWeight: FontWeight.w900,
-                        ),)
-                    ],
-                  )
-                ),
-
                 Padding(
                   padding: const EdgeInsets.all(
                     12.0,
@@ -627,126 +336,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 //
-                dataSet.isEmpty || dataSet.length < 2
-                    ? Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 40.0,
-                          horizontal: 20.0,
-                        ),
-                        margin: EdgeInsets.all(
-                          12.0,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            8.0,
-                          ),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset:
-                                  Offset(0, 3), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          "Not Enough Data to render Chart",
-                          style: TextStyle(
-                            fontSize: 20.0,
-                          ),
-                        ),
-                      )
-                    : Container(
-                        height: 400.0,
-                        padding: EdgeInsets.symmetric(
-                          vertical: 40.0,
-                          horizontal: 12.0,
-                        ),
-                        margin: EdgeInsets.all(
-                          12.0,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(8),
-                            topRight: Radius.circular(8),
-                            bottomLeft: Radius.circular(8),
-                            bottomRight: Radius.circular(8),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset:
-                                  Offset(0, 3), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: LineChart(
-                          LineChartData(
-                            borderData: FlBorderData(
-                              show: false,
-                            ),
-                            lineBarsData: [
-                              LineChartBarData(
-                                // spots: getPlotPoints(snapshot.data!),
-                                spots: getPlotPoints(snapshot.data!),
-                                isCurved: false,
-                                barWidth: 2.5,
 
-                                showingIndicators: [200, 200, 90, 10],
-                                dotData: FlDotData(
-                                  show: true,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                Container(
-                  height: 400.0,
-                  padding: EdgeInsets.symmetric(
-                    vertical: 40.0,
-                    horizontal: 12.0,
-                  ),
-                  margin: EdgeInsets.all(
-                    12.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      topRight: Radius.circular(8),
-                      bottomLeft: Radius.circular(8),
-                      bottomRight: Radius.circular(8),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset:
-                        Offset(0, 3), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: BarChartSample2(),
-                ),
                 //
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                    "Recent Transactions",
-                    style: TextStyle(
-                      fontSize: 32.0,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ),
                 //
                 ListView.builder(
                   shrinkWrap: true,
@@ -770,15 +361,10 @@ class _HomePageState extends State<HomePage> {
                           dataAtIndex.note,
                           dataAtIndex.date,
                           index,
-                            dataAtIndex.type,
                         );
                       } else {
-                        return expenseTile(
-                          dataAtIndex.amount,
-                          dataAtIndex.note,
-                          dataAtIndex.date,
-                          index,
-                          dataAtIndex.type,
+                        return Container(
+
                         );
                       }
                     } else {
@@ -901,7 +487,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget expenseTile(int value, String note, DateTime date, int index, String type) {
+  Widget expenseTile(int value, String note, DateTime date, int index) {
     return InkWell(
       splashColor: Static.PrimaryMaterialColor[400],
       onTap: () {
@@ -940,32 +526,10 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Row(
                       children: [
-                        GestureDetector(
-                          onTap: (){
-
-                              Navigator.of(context)
-                                  .push(
-                                CupertinoPageRoute(
-                                  builder: (context) => AddExpenseNoGradient(
-                                    amountupdate: value,
-                                    noteUpdate: note,
-                                    typeUpdate: type,
-                                    updatePage: false,
-                                    index: index,
-
-                                  ),
-                                ),
-                              )
-                                  .then((value) {
-                                setState(() {});
-                              });
-
-                          },
-                          child: Icon(
-                            Icons.arrow_circle_up_outlined,
-                            size: 28.0,
-                            color: Colors.red[700],
-                          ),
+                        Icon(
+                          Icons.arrow_circle_up_outlined,
+                          size: 28.0,
+                          color: Colors.red[700],
                         ),
                         SizedBox(
                           width: 4.0,
@@ -1021,7 +585,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget incomeTile(int value, String note, DateTime date, int index, String type) {
+  Widget incomeTile(int value, String note, DateTime date, int index) {
     return InkWell(
       splashColor: Static.PrimaryMaterialColor[400],
       onTap: () {
@@ -1058,30 +622,10 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Row(
                   children: [
-                    GestureDetector(
-                      onTap: (){
-                        Navigator.of(context)
-                            .push(
-                          CupertinoPageRoute(
-                            builder: (context) => AddExpenseNoGradient(
-                             amountupdate: value,
-                              noteUpdate: note,
-                              typeUpdate: type,
-                              updatePage: false,
-                              index: index,
-
-                            ),
-                          ),
-                        )
-                            .then((value) {
-                          setState(() {});
-                        });
-                      },
-                      child: Icon(
-                        Icons.arrow_circle_down_outlined,
-                        size: 28.0,
-                        color: Colors.green[700],
-                      ),
+                    Icon(
+                      Icons.arrow_circle_down_outlined,
+                      size: 28.0,
+                      color: Colors.green[700],
                     ),
                     SizedBox(
                       width: 4.0,
