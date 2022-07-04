@@ -29,6 +29,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   //
   int _selectedIndex = 0;
+  final Color redColor = const Color(0xffff5182);
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -60,7 +61,7 @@ class _HomePageState extends State<HomePage> {
   late Box boxBudget;
   late SharedPreferences preferences;
   DbHelper dbHelper = DbHelper();
-  int budget = 0;
+  int budget = 1;
   Map? data;
   int totalBalance = 0;
   int totalIncome = 0;
@@ -69,7 +70,11 @@ class _HomePageState extends State<HomePage> {
   DateTime today = DateTime.now();
   DateTime now = DateTime.now();
   int index = 1;
-
+  int saved = 0;
+  int savedPercen = 0;
+  int totalBalanceYear = 0;
+  int totalIncomeYear = 0;
+  int totalExpenseYear = 0;
   List<String> months = [
     "Jan",
     "Feb",
@@ -148,8 +153,30 @@ class _HomePageState extends State<HomePage> {
     }
     return dataSet;
   }
+  getTotalBalanceYear(List<TransactionModel> entireData) {
+    totalBalanceYear = 0;
+    totalIncomeYear = 0;
+    totalExpenseYear = 0;
+    saved = 0;
+    savedPercen = 0;
+    for (TransactionModel data in entireData) {
 
-  getTotalBalance(List<TransactionModel> entireData) {
+        if (data.type == "Income") {
+          totalBalanceYear += data.amount;
+          totalIncomeYear += data.amount;
+          saved = (totalBalanceYear * 100).floor();
+          savedPercen = (saved ~/ totalIncomeYear).floor();
+
+        } else {
+          totalBalanceYear -= data.amount;
+          totalExpenseYear += data.amount;
+          saved = (totalBalanceYear * 100).floor();
+          savedPercen = (saved ~/ totalIncomeYear).floor();
+        }
+
+    }
+  }
+  getTotalBalanceMonth(List<TransactionModel> entireData) {
     totalBalance = 0;
     totalIncome = 0;
     totalExpense = 0;
@@ -252,7 +279,7 @@ class _HomePageState extends State<HomePage> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
-        backgroundColor: Colors.black,
+        backgroundColor: Static.PrimaryColor,
         unselectedItemColor: Colors.white,
         onTap: _onItemTapped,
       ),
@@ -270,9 +297,9 @@ class _HomePageState extends State<HomePage> {
           maxLines: 1,
         ),
       ),
-      backgroundColor: Colors.black87,
+      backgroundColor: Colors.blueAccent,
       //
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+     // floatingActionButtonLocation: FloatingActionButtonLocation.,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context)
@@ -290,350 +317,397 @@ class _HomePageState extends State<HomePage> {
             16.0,
           ),
         ),
-        backgroundColor: Static.PrimaryColor,
+        backgroundColor: const Color.fromARGB(255, 236, 154, 58),
         child: Icon(
           Icons.add_outlined,
           size: 32.0,
+          color: Colors.black,
         ),
       ),
       //
-      body: FutureBuilder<List<TransactionModel>>(
-        future: fetch(),
-        builder: (context, snapshot) {
-          // print(snapshot.data);
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                "Oopssss !!! There is some error !",
-                style: TextStyle(
-                  fontSize: 24.0,
-                ),
+      body: Column(
+        children: [
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.all(
+                12.0,
               ),
-            );
-          }
-          if (snapshot.hasData) {
-            if (snapshot.data!.isEmpty) {
-              return Center(
-                child: Text(
-                  "You haven't added Any Data !",
-                  style: TextStyle(
-                    fontSize: 24.0,
-                  ),
-                ),
-              );
-            }
-            //
-            getTotalBalance(snapshot.data!);
-            getPlotPoints(snapshot.data!);
-            return ListView(
-              children: [
-                //
-                Padding(
-                  padding: const EdgeInsets.all(
-                    12.0,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(
-                                32.0,
-                              ),
-                              gradient: LinearGradient(
-                                colors: <Color>[
-                                  Static.PrimaryColor,
-                                  Colors.blueAccent,
-                                ],
-                              ),
-                            ),
-                            child: CircleAvatar(
-                              maxRadius: 28.0,
-                              backgroundColor: Colors.transparent,
-                              child: Image.asset(
-                                "assets/face.png",
-                                width: 64.0,
-                              ),
-                            ),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                            32.0,
                           ),
-                          SizedBox(
-                            width: 8.0,
+                          gradient: LinearGradient(
+                            colors: <Color>[
+                              Static.PrimaryColor,
+                              Colors.white,
+                            ],
                           ),
+                        ),
+                        child: CircleAvatar(
+                          maxRadius: 28.0,
+                          backgroundColor: Colors.transparent,
+                          child: Image.asset(
+                            "assets/face.png",
+                            width: 64.0,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 8.0,
+                      ),
 
-                        ],
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            12.0,
-                          ),
-                          color: Colors.white70,
-                        ),
-                        padding: EdgeInsets.all(
-                          12.0,
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context)
-                                .push(
-                              MaterialPageRoute(
-                                builder: (context) => Settings(),
-                              ),
-                            )
-                                .then((value) {
-                              setState(() {});
-                            });
-                          },
-                          child: Icon(
-                            Icons.lightbulb_sharp,
-                            size: 32.0,
-                            color: Color(0xff3E454C),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            12.0,
-                          ),
-                          color: Colors.white70,
-                        ),
-                        padding: EdgeInsets.all(
-                          12.0,
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context)
-                                .push(
-                              MaterialPageRoute(
-                                builder: (context) => NoteHome(),
-                              ),
-                            )
-                                .then((value) {
-                              setState(() {});
-                            });
-                          },
-                          child: Icon(
-                            Icons.note_add_outlined,
-                            size: 32.0,
-                            color: Color(0xff3E454C),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            12.0,
-                          ),
-                          color: Colors.white70,
-                        ),
-                        padding: EdgeInsets.all(
-                          12.0,
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context)
-                                .push(
-                              MaterialPageRoute(
-                                builder: (context) => Settings(),
-                              ),
-                            )
-                                .then((value) {
-                              setState(() {});
-                            });
-                          },
-                          child: Icon(
-                            Icons.settings,
-                            size: 32.0,
-                            color: Color(0xff3E454C),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
-                ),
-                //
-                selectMonth(),
-                //
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  margin: EdgeInsets.all(
-                    12.0,
-                  ),
-                  child: Ink(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: <Color>[
-                          Static.PrimaryColor,
-                          Colors.blueAccent,
-                        ],
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        12.0,
                       ),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(
-                          24.0,
-                        ),
+                      color: colors[2],
+                    ),
+                    padding: EdgeInsets.all(
+                      12.0,
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(
+                          MaterialPageRoute(
+                            builder: (context) => Settings(),
+                          ),
+                        )
+                            .then((value) {
+                          setState(() {});
+                        });
+                      },
+                      child: Icon(
+                        Icons.lightbulb_sharp,
+                        size: 32.0,
+                        color: Color(0xff3E454C),
+                      //  color: Colors.black,
                       ),
                     ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(
-                            24.0,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        12.0,
+                      ),
+                      color: colors[0],
+                    ),
+                    padding: EdgeInsets.all(
+                      12.0,
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(
+                          MaterialPageRoute(
+                            builder: (context) => NoteHome(),
                           ),
+                        )
+                            .then((value) {
+                          setState(() {});
+                        });
+                      },
+                      child: Icon(
+                        Icons.note_add_outlined,
+                        size: 32.0,
+                        color: Color(0xff3E454C),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        12.0,
+                      ),
+                      color: colors[1],
+                    ),
+                    padding: EdgeInsets.all(
+                      12.0,
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(
+                          MaterialPageRoute(
+                            builder: (context) => Settings(),
+                          ),
+                        )
+                            .then((value) {
+                          setState(() {});
+                        });
+                      },
+                      child: Icon(
+                        Icons.settings,
+                        size: 32.0,
+                        color: Color(0xff3E454C),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            height: MediaQuery.of(context).size.height - 219,
+            child: FutureBuilder<List<TransactionModel>>(
+              future: fetch(),
+              builder: (context, snapshot) {
+                // print(snapshot.data);
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      "Oopssss !!! There is some error !",
+                      style: TextStyle(
+                        fontSize: 24.0,
+                      ),
+                    ),
+                  );
+                }
+                if (snapshot.hasData) {
+                  if (snapshot.data!.isEmpty) {
+                    return Center(
+                      child: Text(
+                        "You haven't added Any Data !",
+                        style: TextStyle(
+                          fontSize: 24.0,
                         ),
-                        // color: Static.PrimaryColor,
                       ),
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(
-                        vertical: 18.0,
-                        horizontal: 8.0,
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Total Balance',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 22.0,
-                              // fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 12.0,
-                          ),
-                          totalIncome > totalExpense ?  Text(
-                            'Tk $totalBalance',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 36.0,
-                              fontWeight: FontWeight.w700,
-                              color:   Colors.white ,
-                            ),
-                          ) : Text(
-                            'Tk $totalBalance',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 36.0,
-                              fontWeight: FontWeight.w700,
-                              color:   Colors.red ,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 12.0,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Row(
+                    );
+                  }
+                  //
+                  getTotalBalanceYear(snapshot.data!);
+                  getTotalBalanceMonth(snapshot.data!);
+                  getPlotPoints(snapshot.data!);
+                  return ListView(
+                    children: [
+                      //
+
+                      //Text
+                      Padding(
+                        padding: EdgeInsets.all(12),
+                        child: Column(
+                          children: [
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                GestureDetector(
-                                  onTap: (){
-                                    Navigator.of(context)
-                                        .push(
-                                      CupertinoPageRoute(
-                                        builder: (context) => AddExpenseNoGradient(),
-                                      ),
-                                    )
-                                        .then((value) {
-                                      setState(() {});
-                                    });
-          },
-                                  child: cardIncome(
-                                    totalIncome.toString(),
+                                Text("Total Year Balance: ${totalBalanceYear.toString()}",
+                                  style: TextStyle(
+                                      color: Colors.white
+                                  ),),
+                                Text("Total Year Income: ${totalIncomeYear.toString()}",
+                                  style: TextStyle(
+                                      color: Colors.white
+                                  ),)
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Total Year Expense: ${totalExpenseYear.toString()}",
+                                  style: TextStyle(
+                                      color: Colors.white
+                                  ),),
+                                Text("Saved: ${savedPercen.toString()}%",
+                                  style: TextStyle(
+                                      color: Colors.white
+                                  ),)
+                              ],
+                            ),
+                          ],
+                        )
+                      ),
+
+                      selectMonth(),
+                      //
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        margin: EdgeInsets.all(
+                          12.0,
+                        ),
+                        child: Ink(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: <Color>[
+                                Static.PrimaryColor,
+                                Colors.lightBlueAccent,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(
+                                24.0,
+                              ),
+                            ),
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(
+                                  24.0,
+                                ),
+                              ),
+                              // color: Static.PrimaryColor,
+                            ),
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.symmetric(
+                              vertical: 18.0,
+                              horizontal: 8.0,
+                            ),
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Total Balance',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 22.0,
+                                    // fontWeight: FontWeight.w700,
+                                    color: Colors.white,
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: (){
-                                    Navigator.of(context)
-                                        .push(
-                                      CupertinoPageRoute(
-                                        builder: (context) => AddExpenseNoGradient(updatePage: true,),
+                                SizedBox(
+                                  height: 12.0,
+                                ),
+                                totalIncome > totalExpense ?  Text(
+                                  'Tk $totalBalance',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 36.0,
+                                    fontWeight: FontWeight.w700,
+                                    color:   Colors.white ,
+                                  ),
+                                ) : Text(
+                                  'Tk $totalBalance',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 36.0,
+                                    fontWeight: FontWeight.w700,
+                                    color:  redColor ,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 12.0,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: (){
+                                          Navigator.of(context)
+                                              .push(
+                                            CupertinoPageRoute(
+                                              builder: (context) => AddExpenseNoGradient(updatePage: true,),
+                                            ),
+                                          )
+                                              .then((value) {
+                                            setState(() {});
+                                          });
+                                        },
+                                        child: cardIncome(
+                                          totalIncome.toString(),
+                                        ),
                                       ),
-                                    )
-                                        .then((value) {
-                                      setState(() {});
-                                    });
-                                  },
-                                  child: cardExpense(
-                                    totalExpense.toString(),
+                                      GestureDetector(
+                                        onTap: (){
+                                          Navigator.of(context)
+                                              .push(
+                                            CupertinoPageRoute(
+                                              builder: (context) => AddExpenseNoGradient(updatePage: true,),
+                                            ),
+                                          )
+                                              .then((value) {
+                                            setState(() {});
+                                          });
+                                        },
+                                        child: cardExpense(
+                                          totalExpense.toString(),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-                //
+                      //
 
-                Padding(
-                  padding: const EdgeInsets.all(
-                    12.0,
-                  ),
-                  child:  StepProgressIndicator(
-                    totalSteps: budget,
-                    currentStep: totalExpense ,
-                    size: 8,
-                    padding: 0,
-                    selectedColor: Colors.yellow,
-                    unselectedColor: Colors.cyan,
-                    roundedEdges: Radius.circular(10),
-                    selectedGradientColor: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.yellowAccent, Colors.deepOrange],
-                    ),
-                    unselectedGradientColor: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.blue, Colors.red],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(
-                    12.0,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("$totalExpense",
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.yellow,
-                          fontWeight: FontWeight.w900,
-                        ),),
-                      Text(budget.toString(),
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.redAccent,
-                          fontWeight: FontWeight.w900,
-                        ),)
-                    ],
-                  )
-                ),
+                      Padding(
+                        padding: const EdgeInsets.all(
+                          12.0,
+                        ),
+                        child:  StepProgressIndicator(
+                          totalSteps: totalExpense >=  budget ? totalExpense: budget ,
+                          currentStep: totalExpense ,
+                          size: 8,
+                          padding: 0,
+                          selectedColor: Colors.deepOrange,
+                          unselectedColor: Colors.cyan,
+                          roundedEdges: Radius.circular(10),
+                          selectedGradientColor: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [Colors.white, Colors.deepOrange],
+                          ),
+                          unselectedGradientColor: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [Colors.greenAccent, redColor],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.only(
+                            left: 12,
+                            right: 12,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("$totalExpense",
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  color: colors[0],
+                                  fontWeight: FontWeight.w900,
+                                ),),
+                              Text(totalExpense >=  budget
+                                  ? "Budget Over: ${totalExpense -budget} \n Budget: ${budget.toString()} "
+                                  : budget.toString(),
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  color: redColor,
+                                  fontWeight: FontWeight.bold,
+                                ),)
+                            ],
+                          )
+                      ),
 
-                Padding(
-                  padding: const EdgeInsets.all(
-                    12.0,
-                  ),
-                  child: Text(
-                    "${months[today.month - 1]} ${today.year}",
-                    style: TextStyle(
-                      fontSize: 32.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ),
-                //
-                dataSet.isEmpty || dataSet.length < 2
-                    ? Container(
+                      Padding(
+                        padding: const EdgeInsets.all(
+                          12.0,
+                        ),
+                        child: Text(
+                          "${months[today.month - 1]} ${today.year}",
+                          style: TextStyle(
+                            fontSize: 32.0,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                      //
+                      dataSet.isEmpty || dataSet.length < 2
+                          ? Container(
                         padding: EdgeInsets.symmetric(
                           vertical: 40.0,
                           horizontal: 20.0,
@@ -645,14 +719,14 @@ class _HomePageState extends State<HomePage> {
                           borderRadius: BorderRadius.circular(
                             8.0,
                           ),
-                          color: Colors.white,
+                          color: colors[3],
                           boxShadow: [
                             BoxShadow(
                               color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 5,
                               blurRadius: 7,
                               offset:
-                                  Offset(0, 3), // changes position of shadow
+                              Offset(0, 3), // changes position of shadow
                             ),
                           ],
                         ),
@@ -663,7 +737,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       )
-                    : Container(
+                          : Container(
                         height: 400.0,
                         padding: EdgeInsets.symmetric(
                           vertical: 40.0,
@@ -686,7 +760,7 @@ class _HomePageState extends State<HomePage> {
                               spreadRadius: 5,
                               blurRadius: 7,
                               offset:
-                                  Offset(0, 3), // changes position of shadow
+                              Offset(0, 3), // changes position of shadow
                             ),
                           ],
                         ),
@@ -711,99 +785,104 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                Container(
-                  height: 400.0,
-                  padding: EdgeInsets.symmetric(
-                    vertical: 40.0,
-                    horizontal: 12.0,
-                  ),
-                  margin: EdgeInsets.all(
-                    12.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      topRight: Radius.circular(8),
-                      bottomLeft: Radius.circular(8),
-                      bottomRight: Radius.circular(8),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset:
-                        Offset(0, 3), // changes position of shadow
+                      Container(
+                        height: 400.0,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 40.0,
+                          horizontal: 12.0,
+                        ),
+                        margin: EdgeInsets.all(
+                          12.0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(8),
+                            topRight: Radius.circular(8),
+                            bottomLeft: Radius.circular(8),
+                            bottomRight: Radius.circular(8),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset:
+                              Offset(0, 3), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: BarChartSample2(),
+                      ),
+                      //
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text(
+                          "Recent Transactions",
+                          style: TextStyle(
+                            fontSize: 32.0,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                      //
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: snapshot.data!.length + 1,
+                        itemBuilder: (context, index) {
+                          TransactionModel dataAtIndex;
+                          try {
+                            // dataAtIndex = snapshot.data![index];
+                            dataAtIndex = snapshot.data![index];
+                          } catch (e) {
+                            // deleteAt deletes that key and value,
+                            // hence makign it null here., as we still build on the length.
+                            return Container();
+                          }
+
+                          if (dataAtIndex.date.month == today.month) {
+                            if (dataAtIndex.type == "Income") {
+                              return incomeTile(
+                                dataAtIndex.amount,
+                                dataAtIndex.note,
+                                dataAtIndex.date,
+                                index,
+                                dataAtIndex.type,
+                              );
+                            } else {
+                              return expenseTile(
+                                dataAtIndex.amount,
+                                dataAtIndex.note,
+                                dataAtIndex.date,
+                                index,
+                                dataAtIndex.type,
+                              );
+                            }
+                          } else {
+                            return Container();
+                          }
+                        },
+                      ),
+                      //
+                      SizedBox(
+                        height: 60.0,
                       ),
                     ],
-                  ),
-                  child: BarChartSample2(),
-                ),
-                //
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                    "Recent Transactions",
-                    style: TextStyle(
-                      fontSize: 32.0,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ),
-                //
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: snapshot.data!.length + 1,
-                  itemBuilder: (context, index) {
-                    TransactionModel dataAtIndex;
-                    try {
-                      // dataAtIndex = snapshot.data![index];
-                      dataAtIndex = snapshot.data![index];
-                    } catch (e) {
-                      // deleteAt deletes that key and value,
-                      // hence makign it null here., as we still build on the length.
-                      return Container();
-                    }
-
-                    if (dataAtIndex.date.month == today.month) {
-                      if (dataAtIndex.type == "Income") {
-                        return incomeTile(
-                          dataAtIndex.amount,
-                          dataAtIndex.note,
-                          dataAtIndex.date,
-                          index,
-                            dataAtIndex.type,
-                        );
-                      } else {
-                        return expenseTile(
-                          dataAtIndex.amount,
-                          dataAtIndex.note,
-                          dataAtIndex.date,
-                          index,
-                          dataAtIndex.type,
-                        );
-                      }
-                    } else {
-                      return Container();
-                    }
-                  },
-                ),
-                //
-                SizedBox(
-                  height: 60.0,
-                ),
-              ],
-            );
-          } else {
-            return Text(
-              "Loading...",
-            );
-          }
-        },
+                  );
+                } else {
+                  return Text(
+                    "Loading...",
+                  );
+                }
+              },
+            ),
+          ),
+        ],
       ),
+
+
     );
   }
 
@@ -876,7 +955,7 @@ class _HomePageState extends State<HomePage> {
           child: Icon(
             Icons.arrow_upward,
             size: 28.0,
-            color: Colors.red[700],
+            color: redColor,
           ),
           margin: EdgeInsets.only(
             right: 8.0,
@@ -969,7 +1048,7 @@ class _HomePageState extends State<HomePage> {
                           child: Icon(
                             Icons.arrow_circle_up_outlined,
                             size: 28.0,
-                            color: Colors.red[700],
+                            color: redColor,
                           ),
                         ),
                         SizedBox(
@@ -1152,13 +1231,94 @@ class _HomePageState extends State<HomePage> {
           InkWell(
             onTap: () {
               setState(() {
+                index = 6;
+                today = DateTime(now.year, now.month - 5, today.day);
+              });
+            },
+            child: Container(
+              height: 25.0,
+              width: MediaQuery.of(context).size.width * 0.12,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  8.0,
+                ),
+                color: index == 6 ? Static.PrimaryColor : Colors.white,
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                months[now.month - 6],
+                style: TextStyle(
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.w600,
+                  color: index == 6 ? Colors.white : Static.PrimaryColor,
+                ),
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              setState(() {
+                index = 5;
+                today = DateTime(now.year, now.month - 4, today.day);
+              });
+            },
+            child: Container(
+              height: 25.0,
+              width: MediaQuery.of(context).size.width * 0.12,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  8.0,
+                ),
+                color: index == 5 ? Static.PrimaryColor : Colors.white,
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                months[now.month - 5],
+                style: TextStyle(
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.w600,
+                  color: index == 5 ? Colors.white : Static.PrimaryColor,
+                ),
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              setState(() {
+                index = 4;
+                today = DateTime(now.year, now.month - 3, today.day);
+              });
+            },
+            child: Container(
+              height: 25.0,
+              width: MediaQuery.of(context).size.width * 0.12,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  8.0,
+                ),
+                color: index == 4 ? Static.PrimaryColor : Colors.white,
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                months[now.month - 4],
+                style: TextStyle(
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.w600,
+                  color: index == 4 ? Colors.white : Static.PrimaryColor,
+                ),
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              setState(() {
                 index = 3;
                 today = DateTime(now.year, now.month - 2, today.day);
               });
             },
             child: Container(
-              height: 50.0,
-              width: MediaQuery.of(context).size.width * 0.3,
+              height: 25.0,
+              width: MediaQuery.of(context).size.width * 0.12,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(
                   8.0,
@@ -1169,7 +1329,7 @@ class _HomePageState extends State<HomePage> {
               child: Text(
                 months[now.month - 3],
                 style: TextStyle(
-                  fontSize: 20.0,
+                  fontSize: 15.0,
                   fontWeight: FontWeight.w600,
                   color: index == 3 ? Colors.white : Static.PrimaryColor,
                 ),
@@ -1184,8 +1344,8 @@ class _HomePageState extends State<HomePage> {
               });
             },
             child: Container(
-              height: 50.0,
-              width: MediaQuery.of(context).size.width * 0.3,
+              height: 25.0,
+              width: MediaQuery.of(context).size.width * 0.12,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(
                   8.0,
@@ -1196,7 +1356,7 @@ class _HomePageState extends State<HomePage> {
               child: Text(
                 months[now.month - 2],
                 style: TextStyle(
-                  fontSize: 20.0,
+                  fontSize: 15.0,
                   fontWeight: FontWeight.w600,
                   color: index == 2 ? Colors.white : Static.PrimaryColor,
                 ),
@@ -1211,8 +1371,8 @@ class _HomePageState extends State<HomePage> {
               });
             },
             child: Container(
-              height: 50.0,
-              width: MediaQuery.of(context).size.width * 0.3,
+              height: 25.0,
+              width: MediaQuery.of(context).size.width * 0.12,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(
                   8.0,
@@ -1223,7 +1383,7 @@ class _HomePageState extends State<HomePage> {
               child: Text(
                 months[now.month - 1],
                 style: TextStyle(
-                  fontSize: 20.0,
+                  fontSize: 15.0,
                   fontWeight: FontWeight.w600,
                   color: index == 1 ? Colors.white : Static.PrimaryColor,
                 ),

@@ -22,7 +22,7 @@ class BarChartSample2State extends State<BarChartSample2> {
   @override
   void initState() {
     super.initState();
-    final barGroup1 = makeGroupData(0, 0, 0);
+    final barGroup1 = makeGroupData(0, 25, 20);
     final barGroup2 = makeGroupData(1, 16, 12);
     final barGroup3 = makeGroupData(2, 18, 5);
     final barGroup4 = makeGroupData(3, 20, 16);

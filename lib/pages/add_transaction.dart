@@ -55,6 +55,7 @@ class _AddExpenseNoGradientState extends State<AddExpenseNoGradient> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: AppBar(
         toolbarHeight: 50,
         centerTitle: true,
@@ -75,7 +76,7 @@ class _AddExpenseNoGradientState extends State<AddExpenseNoGradient> {
           ),
         ),
       ),
-      backgroundColor: Colors.black54,
+      backgroundColor: Colors.blueAccent,
       //
       body: ListView(
         padding: EdgeInsets.all(
@@ -115,7 +116,7 @@ class _AddExpenseNoGradientState extends State<AddExpenseNoGradient> {
                   decoration: InputDecoration(
                     hintText: widget.updatePage == true ? "amount" : widget.amountupdate.toString(),
                     border: InputBorder.none,
-                      hintStyle: TextStyle(color: Colors.grey)
+                      hintStyle: TextStyle(color: Colors.white)
                   ),
                   style: TextStyle(
                     fontSize: 24.0,
@@ -195,7 +196,7 @@ class _AddExpenseNoGradientState extends State<AddExpenseNoGradient> {
                   decoration: InputDecoration(
                     hintText: widget.updatePage == true ? "Note on Transaction" : widget.noteUpdate,
                     border: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.grey)
+                    hintStyle: TextStyle(color: Colors.white)
                   ),
                   style: TextStyle(
                     fontSize: 20.0,
@@ -327,7 +328,7 @@ class _AddExpenseNoGradientState extends State<AddExpenseNoGradient> {
                     "${selectedDate.day} ${months[selectedDate.month - 1]}",
                     style: TextStyle(
                       fontSize: 20.0,
-                      color: Colors.grey[700],
+                      color: Colors.white,
                     ),
                   ),
                 ],

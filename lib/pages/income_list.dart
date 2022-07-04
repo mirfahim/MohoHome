@@ -175,7 +175,7 @@ class _HomePageState extends State<IncomeListPage> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
         unselectedItemColor: Colors.white,
-        backgroundColor: Colors.black,
+        backgroundColor: Static.PrimaryColor,
 
         onTap: _onItemTapped,
       ),
@@ -193,7 +193,7 @@ class _HomePageState extends State<IncomeListPage> {
           maxLines: 1,
         ),
       ),
-      backgroundColor: Colors.black54,
+      backgroundColor: Colors.blueAccent,
       //
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
@@ -213,10 +213,11 @@ class _HomePageState extends State<IncomeListPage> {
             16.0,
           ),
         ),
-        backgroundColor: Static.PrimaryColor,
+        backgroundColor: const Color.fromARGB(255, 236, 154, 58),
         child: Icon(
           Icons.add_outlined,
           size: 32.0,
+          color: Colors.black,
         ),
       ),
       //

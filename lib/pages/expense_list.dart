@@ -173,7 +173,7 @@ class _HomePageState extends State<ExpenseListPage> {
         ],
         currentIndex: _selectedIndex,
         unselectedItemColor: Colors.white,
-        backgroundColor: Colors.black,
+        backgroundColor: Static.PrimaryColor,
         selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
       ),
@@ -191,7 +191,7 @@ class _HomePageState extends State<ExpenseListPage> {
           maxLines: 1,
         ),
       ),
-      backgroundColor: Colors.black54,
+      backgroundColor: Colors.blueAccent,
       //
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
@@ -211,10 +211,11 @@ class _HomePageState extends State<ExpenseListPage> {
             16.0,
           ),
         ),
-        backgroundColor: Static.PrimaryColor,
+        backgroundColor: const Color.fromARGB(255, 236, 154, 58),
         child: Icon(
           Icons.add_outlined,
           size: 32.0,
+          color: Colors.black,
         ),
       ),
       //

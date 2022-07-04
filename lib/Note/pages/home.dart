@@ -5,7 +5,7 @@ import 'package:expense/pages/expense_list.dart';
 import 'package:expense/pages/homepage.dart';
 import 'package:expense/pages/income_list.dart';
 import 'package:expense/pages/models/transaction.dart';
-
+import 'package:expense/static.dart' as Static;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
@@ -90,7 +90,7 @@ class _HomeState extends State<NoteHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Static.PrimaryColor,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -111,7 +111,7 @@ class _HomeState extends State<NoteHome> {
 
         onTap: _onItemTapped,
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.blueAccent,
       body: SafeArea(
         child: Container(
           margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
