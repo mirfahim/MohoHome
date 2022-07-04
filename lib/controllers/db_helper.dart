@@ -50,14 +50,14 @@ class DbHelper {
     await box.clear();
   }
 
-  addName(String name) async {
+  addName(int name) async {
     preferences = await SharedPreferences.getInstance();
-    preferences.setString('name', name);
+    preferences.setInt('name', name);
   }
 
-  getName() async {
+   getName() async {
     preferences = await SharedPreferences.getInstance();
-    return preferences.getString('name');
+    return preferences.get('name');
   }
 
   setLocalAuth(bool val) async {

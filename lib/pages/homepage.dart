@@ -86,12 +86,17 @@ class _HomePageState extends State<HomePage> {
   ];
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
     getPreference();
+
     box = Hive.box('money');
     boxBudget = Hive.box('budget');
-    
+    getBudget();
+  }
+
+  getBudget() async {
+    budget = await dbHelper.getName() as int;
   }
 
   getPreference() async {
@@ -571,8 +576,8 @@ class _HomePageState extends State<HomePage> {
                     12.0,
                   ),
                   child:  StepProgressIndicator(
-                    totalSteps: 1233,
-                    currentStep: 32,
+                    totalSteps: budget,
+                    currentStep: totalExpense ,
                     size: 8,
                     padding: 0,
                     selectedColor: Colors.yellow,
@@ -597,13 +602,13 @@ class _HomePageState extends State<HomePage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("20000",
+                      Text("$totalExpense",
                         style: TextStyle(
                           fontSize: 16.0,
                           color: Colors.yellow,
                           fontWeight: FontWeight.w900,
                         ),),
-                      Text("40000",
+                      Text(budget.toString(),
                         style: TextStyle(
                           fontSize: 16.0,
                           color: Colors.redAccent,

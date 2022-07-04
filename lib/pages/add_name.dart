@@ -15,7 +15,7 @@ class _AddNameState extends State<AddName> {
   //
   DbHelper dbHelper = DbHelper();
 
-  String name = "";
+  int name = 0;
 
   //
   @override
@@ -90,7 +90,7 @@ class _AddNameState extends State<AddName> {
                 ),
                 maxLength: 12,
                 onChanged: (val) {
-                  name = val;
+                  name = int.parse(val);
                 },
               ),
             ),
@@ -103,7 +103,7 @@ class _AddNameState extends State<AddName> {
               height: 50.0,
               child: ElevatedButton(
                 onPressed: () async {
-                  if (name.isEmpty) {
+                  if (name == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         action: SnackBarAction(

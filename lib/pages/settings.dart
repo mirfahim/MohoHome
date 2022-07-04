@@ -71,13 +71,13 @@ class _SettingsState extends State<Settings> {
           //
           ListTile(
             onTap: () async {
-              String nameEditing = "";
-              String? name = await showDialog(
+              int nameEditing = 0;
+              int? name = await showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
                   backgroundColor: Colors.grey[300],
                   title: Text(
-                    "Enter new name",
+                    "Enter new budget",
                   ),
                   content: Container(
                     decoration: BoxDecoration(
@@ -91,8 +91,9 @@ class _SettingsState extends State<Settings> {
                       horizontal: 16.0,
                     ),
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        hintText: "Your Name",
+                        hintText: "Your Budget",
                         border: InputBorder.none,
                       ),
                       style: TextStyle(
@@ -100,7 +101,7 @@ class _SettingsState extends State<Settings> {
                       ),
                       maxLength: 12,
                       onChanged: (val) {
-                        nameEditing = val;
+                        nameEditing = int.parse(val);
                       },
                     ),
                   ),
@@ -117,7 +118,7 @@ class _SettingsState extends State<Settings> {
                 ),
               );
               //
-              if (name != null && name.isNotEmpty) {
+              if (name != null && name != null) {
                 DbHelper dbHelper = DbHelper();
                 await dbHelper.addName(name);
               }
@@ -133,14 +134,14 @@ class _SettingsState extends State<Settings> {
               ),
             ),
             title: Text(
-              "Change Name",
+              "Add Budget",
               style: TextStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.w800,
               ),
             ),
             subtitle: Text(
-              "Welcome {newname}",
+              "Monthly Budget",
             ),
             trailing: Icon(
               Icons.change_circle,

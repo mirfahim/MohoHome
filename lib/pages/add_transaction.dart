@@ -119,6 +119,7 @@ class _AddExpenseNoGradientState extends State<AddExpenseNoGradient> {
                   ),
                   style: TextStyle(
                     fontSize: 24.0,
+                    color: Colors.white
                   ),
                   onChanged: (val) {
                     try {

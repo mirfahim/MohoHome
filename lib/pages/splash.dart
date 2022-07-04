@@ -1,5 +1,7 @@
 // not just splash , will ask use for their name here
 
+import 'dart:async';
+
 import 'package:expense/controllers/db_helper.dart';
 import 'package:expense/pages/add_name.dart';
 import 'package:expense/pages/auth.dart';
@@ -15,41 +17,45 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
   //
-  DbHelper dbHelper = DbHelper();
+  //DbHelper dbHelper = DbHelper();
 
   @override
   void initState() {
     super.initState();
-    getName();
+
+    Timer(Duration(seconds: 3), () {
+      getName();
+    });
+
   }
 
-  Future getName() async {
-    String? name = await dbHelper.getName();
-    if (name != null) {
-      // user has entered a name
-      // since name is also important and can't be null
-      // we will check for auth here and will show , auth if it is on
-      bool? auth = await dbHelper.getLocalAuth();
-      if (auth != null && auth) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => FingerPrintAuth(),
-          ),
-        );
-      } else {
+   getName()  {
+    // int name = await  dbHelper.getName() as int;
+    // if (name != null) {
+    //   // user has entered a name
+    //   // since name is also important and can't be null
+    //   // we will check for auth here and will show , auth if it is on
+    //   bool? auth = await dbHelper.getLocalAuth();
+    //   if (auth != null && auth) {
+    //     Navigator.of(context).pushReplacement(
+    //       MaterialPageRoute(
+    //         builder: (context) => FingerPrintAuth(),
+    //       ),
+    //     );
+    //   } else {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => HomePage(),
           ),
         );
-      }
-    } else {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => AddName(),
-        ),
-      );
-    }
+    //   }
+    // } else {
+    //   Navigator.of(context).pushReplacement(
+    //     MaterialPageRoute(
+    //       builder: (context) => AddName(),
+    //     ),
+    //   );
+    // }
   }
 
   //
